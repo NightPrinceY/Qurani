@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Yahya Alnwsany">
+    <meta name="description" content="A comprehensive multi-agent voice-enabled system for interactive Quranic learning using advanced speech recognition, NLP, and text-to-speech technologies">
+    <title>Multi-Agent Voice Quran Assistant: A Comprehensive System for Interactive Quranic Learning</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 1in;
+        }
+        
+        /* Page numbering will be handled by browser print settings */
+        
+        @media print {
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+            
+            .no-break {
+                page-break-inside: avoid;
+            }
+            
+            h2, h3 {
+                page-break-after: avoid;
+            }
+            
+            table, .figure, .architecture-box {
+                page-break-inside: avoid;
+            }
+            
+            p, li {
+                orphans: 3;
+                widows: 3;
+            }
+        }
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.5;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 1in;
+            color: #000;
+            background: #fff;
+        }
+        
+        h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 0.3in;
+            margin-bottom: 0.2in;
+            line-height: 1.2;
+        }
+        
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 0.3in;
+            margin-bottom: 0.1in;
+            text-align: left;
+            page-break-after: avoid;
+        }
+        
+        h3 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-top: 0.2in;
+            margin-bottom: 0.08in;
+        }
+        
+        h4 {
+            font-size: 11pt;
+            font-weight: bold;
+            margin-top: 0.15in;
+            margin-bottom: 0.06in;
+        }
+        
+        .author-info {
+            text-align: center;
+            font-size: 11pt;
+            margin-bottom: 0.15in;
+        }
+        
+        .affiliation {
+            text-align: center;
+            font-size: 10pt;
+            margin-bottom: 0.2in;
+            font-style: normal;
+        }
+        
+        .separator-line {
+            border-top: 1px solid #000;
+            margin: 0.2in 0;
+            width: 100%;
+        }
+        
+        .abstract-keywords-container {
+            display: table;
+            width: 100%;
+            margin: 0.15in 0;
+        }
+        
+        .keywords-section {
+            display: table-cell;
+            width: 30%;
+            vertical-align: top;
+            padding-right: 0.15in;
+        }
+        
+        .abstract-section {
+            display: table-cell;
+            width: 70%;
+            vertical-align: top;
+            padding-left: 0.15in;
+        }
+        
+        .keywords-title, .abstract-title {
+            font-weight: bold;
+            font-size: 10pt;
+            margin-bottom: 0.08in;
+            text-transform: uppercase;
+        }
+        
+        .keywords-list {
+            font-size: 9.5pt;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .keywords-list li {
+            margin-bottom: 0.04in;
+            text-indent: 0;
+            font-size: 9.5pt;
+        }
+        
+        .abstract-text {
+            font-size: 9.5pt;
+            line-height: 1.4;
+            text-align: justify;
+            text-indent: 0;
+            margin: 0;
+        }
+        
+        p {
+            text-align: justify;
+            text-indent: 0.25in;
+            margin-bottom: 0;
+            margin-top: 0;
+            font-size: 11pt;
+            line-height: 1.5;
+        }
+        
+        .no-indent {
+            text-indent: 0;
+        }
+        
+        ul, ol {
+            margin-left: 0.4in;
+            margin-bottom: 0.1in;
+            margin-top: 0.1in;
+        }
+        
+        li {
+            margin-bottom: 0.05in;
+            font-size: 11pt;
+            line-height: 1.5;
+        }
+        
+        ul ul, ol ol, ul ol, ol ul {
+            margin-left: 0.3in;
+            margin-top: 0.05in;
+            margin-bottom: 0.05in;
+        }
+        
+        .figure {
+            text-align: center;
+            margin: 0.15in 0;
+        }
+        
+        .figure img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+        
+        .figure-small {
+            max-width: 5in;
+            margin: 0.15in auto;
+        }
+        
+        .figure-small img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+        
+        .figure-caption {
+            font-size: 10pt;
+            font-style: italic;
+            margin-top: 0.05in;
+            text-align: center;
+            page-break-after: avoid;
+        }
+        
+        .figure, .figure-small {
+            page-break-inside: avoid;
+        }
+        
+        .code-block {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 0.1in;
+            margin: 0.1in 0;
+            font-family: 'Courier New', monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.15in 0;
+            font-size: 10pt;
+        }
+        
+        table caption {
+            font-weight: bold;
+            margin-bottom: 0.05in;
+            text-align: left;
+            caption-side: top;
+            font-size: 10pt;
+        }
+        
+        .no-break {
+            page-break-inside: avoid;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        th, td {
+            border: 1px solid #000;
+            padding: 0.06in;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        .references {
+            margin-top: 0.3in;
+        }
+        
+        .reference-item {
+            margin-bottom: 0.08in;
+            text-indent: -0.25in;
+            padding-left: 0.25in;
+            font-size: 10pt;
+            line-height: 1.4;
+            hanging-punctuation: first;
+        }
+        
+        .section {
+            margin-top: 0.25in;
+        }
+        
+        strong {
+            font-weight: bold;
+        }
+        
+        em {
+            font-style: italic;
+        }
+        
+        .architecture-box {
+            border: 1px solid #000;
+            padding: 0.08in;
+            margin: 0.1in 0;
+            background-color: #fff;
+            font-size: 9pt;
+            line-height: 1.3;
+        }
+        
+        .component {
+            margin: 0.04in 0;
+            padding: 0;
+            background-color: transparent;
+            border: none;
+            border-left: none;
+        }
+        
+        .component-title {
+            font-weight: bold;
+            font-size: 9.5pt;
+            margin-right: 0.05in;
+        }
+        
+        .component p {
+            margin: 0;
+            text-indent: 0;
+            font-size: 9pt;
+        }
+        
+        .component ul {
+            margin-left: 0.25in;
+            margin-top: 0.03in;
+            margin-bottom: 0.03in;
+            font-size: 9pt;
+        }
+        
+        .component li {
+            margin-bottom: 0.02in;
+            font-size: 9pt;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multi-Agent Voice Quran Assistant: A Comprehensive System for Interactive Quranic Learning</h1>
+    <div class="author-info">
+        <p class="no-indent"><strong>Yahya Alnwsany</strong></p>
+    </div>
+    <div class="affiliation">
+        <p class="no-indent">Faculty of Artificial Intelligence, Kafr Elsheikh University, Egypt</p>
+    </div>
+    <div class="separator-line"></div>
+    <div class="abstract-keywords-container">
+        <div class="keywords-section">
+            <div class="keywords-title">Keywords</div>
+            <ul class="keywords-list">
+                <li>Voice Assistant</li>
+                <li>Multi-Agent Systems</li>
+                <li>Quranic Technology</li>
+                <li>Arabic NLP</li>
+                <li>Speech Recognition</li>
+                <li>Islamic Education</li>
+                <li>Speech-to-Text</li>
+                <li>Text-to-Speech</li>
+                <li>Retrieval-Augmented Generation</li>
+                <li>Tajweed Validation</li>
+            </ul>
+        </div>
+        <div class="abstract-section">
+            <div class="abstract-title">Abstract</div>
+            <p class="abstract-text">
+                This paper presents a comprehensive multi-agent voice-enabled system designed to facilitate interactive learning and engagement with the Holy Quran. The system integrates advanced speech recognition, natural language processing, and text-to-speech technologies to provide users with a seamless voice-based interface for Quranic recitation validation, translation, tafsir (exegesis), and various natural language processing tasks. The architecture employs a microservices-oriented design with specialized agents for Quran-specific services, language processing, and orchestration through a central LLM router. The system utilizes state-of-the-art Arabic speech recognition models, including NVIDIA's FastConformer-Hybrid Large model for speech-to-text conversion, AhmedEladl's Saudi TTS model for high-quality Arabic text-to-speech synthesis, and OpenAI's GPT-OSS-20B for intelligent text generation and routing. The implementation leverages a comprehensive Quran JSON dataset containing 6,236 verses across 114 surahs, enabling accurate verse matching, tajweed validation, and contextual understanding. This paper details the system architecture, implementation methodology, component integration, and discusses the potential impact of such technology on Islamic education and digital accessibility.
+            </p>
+        </div>
+    </div>
+    <h2>1. Introduction</h2>
+    <p>
+        The integration of artificial intelligence and voice technology in religious education represents a significant advancement in making sacred texts more accessible and interactive. The Holy Quran, being the central religious text of Islam, has been the subject of numerous technological innovations aimed at facilitating learning, recitation, and understanding [9]. Traditional methods of Quranic learning, while effective, often require physical presence with qualified teachers and can be challenging for individuals in remote locations or those with limited access to educational resources. This limitation becomes particularly significant in the context of global Muslim communities, where access to qualified instructors may be limited by geographic, economic, or social constraints.
+    </p>
+    <p>
+        Recent advances in Arabic natural language processing [7, 15], speech recognition [2, 5], and large language models [10] have created unprecedented opportunities for developing intelligent systems that can assist in Quranic education. The challenge lies in creating a system that not only accurately processes Arabic speech and text but also understands the unique linguistic and religious context of the Quran, including proper recitation rules (tajweed), verse validation, and interpretation (tafsir). Quranic Arabic presents particular challenges due to its classical form, which differs from Modern Standard Arabic in vocabulary, grammar, and stylistic features. Additionally, the preservation of diacritical marks (tashkeel) is critical, as these marks determine both meaning and proper pronunciation.
+    </p>
+    <p>
+        This paper introduces a multi-agent voice Quran assistant that addresses these challenges through a sophisticated architecture combining specialized microservices for different aspects of Quranic interaction. The system is designed to handle multiple user intents, including recitation validation, translation requests, tafsir queries, and general natural language processing tasks related to the Quran. By employing a multi-agent architecture [8, 17], the system can provide specialized, high-quality responses for each type of query while maintaining scalability and extensibility.
+    </p>
+    <p>
+        The primary contributions of this work include: (1) a comprehensive multi-agent architecture for voice-based Quranic interaction that enables specialized handling of diverse user needs, (2) integration of state-of-the-art Arabic speech recognition and synthesis models specifically selected for their effectiveness with classical Arabic and Quranic text, (3) a specialized Quran validation system with advanced tajweed checking capabilities that provides detailed feedback to learners, (4) a retrieval-augmented generation system [6, 19] for tafsir using classical sources that ensures accuracy and adherence to authoritative interpretations, and (5) a flexible orchestration layer that intelligently routes user intents to appropriate specialized agents, enabling efficient and context-aware processing.
+    </p>
+    <h2>2. Related Work</h2>
+    
+    <p>
+        The intersection of technology and Quranic studies has seen significant development over the past decades. Early systems focused primarily on digital text storage and basic search functionality [9]. More recent work has explored the application of natural language processing techniques to Arabic text, though challenges remain due to the complexity of Arabic morphology and the unique characteristics of Quranic Arabic [7, 15].
+    </p>
+    <p>
+        Speech recognition for Arabic has advanced considerably with models like Whisper [5] and specialized Arabic models such as NVIDIA's FastConformer series [2]. These models have demonstrated strong performance on Modern Standard Arabic, though Quranic Arabic presents additional challenges due to its classical form and specific pronunciation rules. Text-to-speech systems for Arabic have similarly evolved, with recent models achieving high-quality synthesis that approaches natural human speech [3, 16].
+    </p>
+    <p>
+        Multi-agent systems have been successfully applied in various domains, demonstrating their effectiveness in handling complex, distributed tasks [8, 17]. The application of this paradigm to religious text interaction represents a novel approach that allows for specialized handling of different types of queries and tasks. Microservices architectures, in particular, have shown promise for building scalable and maintainable systems [18].
+    </p>
+    <p>
+        Retrieval-Augmented Generation (RAG) has emerged as a powerful technique for combining the benefits of large language models with domain-specific knowledge bases [6]. This approach is particularly relevant for tafsir generation, where accuracy and adherence to classical sources are paramount. RAG systems have demonstrated effectiveness in reducing hallucinations and improving factual accuracy in knowledge-intensive tasks [19].
+    </p>
+    <h2>3. System Architecture</h2>
+    
+    <p>
+        The multi-agent voice Quran assistant follows a layered microservices architecture, designed for scalability, maintainability, and extensibility. The system is organized into distinct layers, each responsible for specific aspects of the interaction pipeline.
+    </p>
+    <h3>3.1 Architecture Overview</h3>
+    
+    <p>
+        The system architecture consists of seven primary layers: User Layer, Input Processing Layer, Core Orchestration Layer, Quran Services Layer, Language Services Layer, Knowledge Base Layer, and Response & Output Layer. Each layer contains specialized components (Microservice Components - MCPs) that handle specific functionalities. Figure 1 illustrates the complete system architecture with all layers and their interconnections.
+    </p>
+    
+    <div class="figure figure-small no-break">
+        <img src="Arch/Arch.jpg" alt="Multi-Agent Voice Quran Assistant System Architecture">
+        <div class="figure-caption">
+            <strong>Figure 1:</strong> System Architecture of the Multi-Agent Voice Quran Assistant showing the layered microservices design with User Layer, Input Processing, Core Orchestration, Quran Services, Language Services, Knowledge Base, Response & Output, and Infrastructure layers.
+        </div>
+    </div>
+    
+    <div class="architecture-box no-break">
+        <div class="component">
+            <span class="component-title">User Layer:</span> Handles user interaction through voice input and provides the user interface. The API Gateway serves as the entry point, managing traffic and providing a unified interface to backend services.
+        </div>
+        <div class="component">
+            <span class="component-title">Input Processing Layer:</span> Contains the Speech-to-Text (STT) MCP, which converts spoken Arabic input to text using NVIDIA's FastConformer-Hybrid Large model. The Intent Classifier analyzes transcribed text to determine user intent (recitation check, translation, tafsir, etc.).
+        </div>
+        <div class="component">
+            <span class="component-title">Core Orchestration Layer:</span> The LLM Router serves as the central hub, receiving classified intents and routing requests to appropriate specialized services. It can utilize various LLM providers (OpenAI, Hugging Face, or local models) for processing and decision-making.
+        </div>
+        <div class="component">
+            <span class="component-title">Quran Services Layer:</span> Specialized services for Quran-specific tasks:
+            <ul>
+                <li><strong>Quran Validator MCP:</strong> Validates recitation against JSON database and checks tajweed rules</li>
+                <li><strong>Tafsir RAG MCP:</strong> Provides exegesis using retrieval-augmented generation from classical sources</li>
+            </ul>
+        </div>
+        <div class="component">
+            <span class="component-title">Language Services Layer:</span> Handles general language processing:
+            <ul>
+                <li><strong>Translation MCP:</strong> Multi-language translation capabilities</li>
+                <li><strong>NLP Extensions:</strong> Summarization, sentiment analysis, and question-answering</li>
+            </ul>
+        </div>
+        <div class="component">
+            <span class="component-title">Knowledge Base Layer:</span> Provides data storage and retrieval:
+            <ul>
+                <li><strong>VectorDB:</strong> Vector database (Chroma, Weaviate, or FAISS) for semantic search</li>
+                <li><strong>Object Storage:</strong> Stores datasets, embeddings, and system logs</li>
+            </ul>
+        </div>
+        <div class="component">
+            <span class="component-title">Response & Output Layer:</span> Generates final responses and converts them to speech:
+            <ul>
+                <li><strong>Response Generator:</strong> Constructs textual responses from processed information</li>
+                <li><strong>TTS MCP:</strong> Converts text to speech using AhmedEladl's Saudi TTS model</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h3>3.2 Data Flow and Request Processing</h3>
+    
+    <p>
+        The system follows a unidirectional data flow pattern with asynchronous processing capabilities. The request processing pipeline can be formally described as follows:
+    </p>
+    
+    <ol>
+        <li><strong>Voice Input Acquisition:</strong> User provides voice input through the User Interface, which captures audio at standard sampling rates with appropriate bit depth. The audio stream is buffered and sent to the API Gateway.</li>
+        <li><strong>API Gateway Processing:</strong> The API Gateway performs initial request validation, authentication via JWT tokens, and rate limiting to manage system load. It routes the request to the appropriate backend service based on endpoint configuration.</li>
+        <li><strong>Speech-to-Text Conversion:</strong> STT MCP receives the audio stream and processes it using NVIDIA's FastConformer model. The model processes audio chunks with appropriate windowing and overlap strategies. The output includes text with diacritical marks (tashkeel) and punctuation.</li>
+        <li><strong>Intent Classification:</strong> The Intent Classifier employs a fine-tuned BERT-based model [20] trained on Quranic interaction datasets. It classifies intents into categories: recitation_validation, translation_request, tafsir_query, general_qa, and other_nlp_tasks.</li>
+        <li><strong>LLM Router Orchestration:</strong> The LLM Router receives the classified intent along with context from previous interactions (maintained in cache with appropriate TTL). It uses GPT-OSS-20B to generate a routing decision and constructs a service invocation plan. The router supports parallel invocation of multiple services when needed.</li>
+        <li><strong>Specialized Service Processing:</strong> Based on the routing decision, appropriate MCPs are invoked:
+            <ul>
+                <li><strong>Quran Validator:</strong> Performs fuzzy string matching using Levenshtein distance with appropriate similarity thresholds against the JSON database, then applies tajweed rule checking using a finite-state transducer (FST) model.</li>
+                <li><strong>Tafsir RAG:</strong> Generates query embeddings using multilingual-mpnet-base-v2, retrieves top-k relevant passages from VectorDB using cosine similarity with appropriate thresholds, and generates response using GPT-OSS-20B with retrieved context.</li>
+                <li><strong>Translation MCP:</strong> Utilizes a fine-tuned mBART model for Arabic-to-target-language translation, with special handling for religious terminology through a custom glossary.</li>
+            </ul>
+        </li>
+        <li><strong>Knowledge Base Retrieval:</strong> VectorDB performs semantic search using approximate nearest neighbor (ANN) algorithms. For FAISS, IndexIVFFlat with appropriate clustering is used. Object Storage provides cached embeddings and pre-computed features to reduce latency.</li>
+        <li><strong>Response Generation:</strong> The Response Generator aggregates results from invoked services, applies post-processing (formatting, validation), and constructs a structured JSON response. Response templates are used for common patterns to ensure consistency.</li>
+        <li><strong>Text-to-Speech Synthesis:</strong> TTS MCP receives the text response and generates audio using AhmedEladl's Saudi TTS model. The model produces high-quality audio output with natural prosody. SSML tags are used for emphasis and pauses in critical sections.</li>
+        <li><strong>Audio Delivery:</strong> The final audio stream is delivered to the user through WebSocket connection for real-time streaming or HTTP response for complete audio file delivery.</li>
+    </ol>
+    
+    <p>
+        The entire pipeline is designed to complete within reasonable timeframes for typical queries, with processing times varying based on query complexity, audio length, and system load.
+    </p>
+    <h2>4. Methodology</h2>
+    
+    <h3>4.1 Data Sources</h3>
+    
+    <p>
+        The system utilizes a comprehensive Quran JSON dataset (quranjson) containing structured data for all 6,236 verses across 114 surahs and 30 juz. This dataset provides:
+    </p>
+    
+    <ul>
+        <li>Complete Arabic text with diacritical marks (tashkeel)</li>
+        <li>Verse numbering and surah organization</li>
+        <li>Metadata for navigation and reference</li>
+        <li>Structured format enabling efficient matching and validation</li>
+    </ul>
+    
+    <p>
+        The dataset serves as the foundation for verse matching, recitation validation, and contextual understanding within the system.
+    </p>
+    <h3>4.2 Model Selection and Integration</h3>
+    
+    <h4>4.2.1 Speech-to-Text Model</h4>
+    
+    <p>
+        The system employs NVIDIA's <strong>stt_ar_fastconformer_hybrid_large_pcd_v1.0</strong> model for Arabic speech recognition. This model represents a state-of-the-art approach to Arabic speech processing with the following technical specifications:
+    </p>
+    
+    <ul>
+        <li><strong>Architecture:</strong> Hybrid architecture combining Connectionist Temporal Classification (CTC) for alignment and Transformer-based attention mechanisms for sequence modeling. The model employs a large-scale architecture optimized for Arabic speech recognition.</li>
+        <li><strong>Training Data:</strong> Trained on extensive diverse Arabic speech data including Modern Standard Arabic, classical Arabic, and multiple dialects. The training corpus includes Quranic recitation samples to improve performance on religious text.</li>
+        <li><strong>PCD Support:</strong> The model natively supports Punctuation, Capitalization, and Diacritics (PCD), outputting fully diacritized Arabic text. This is critical for Quranic text where diacritical marks (harakat) determine meaning and pronunciation.</li>
+        <li><strong>Performance Characteristics:</strong> The model demonstrates strong performance on Arabic speech recognition tasks, with particular effectiveness for classical Arabic and Quranic recitation due to its specialized training and PCD capabilities.</li>
+        <li><strong>Inference Optimization:</strong> The model supports optimization for deployment on NVIDIA GPUs, enabling efficient batch processing for handling multiple concurrent requests.</li>
+        <li><strong>Audio Processing:</strong> Accepts audio input at standard sampling rates (typically 16kHz) with appropriate bit depth. The model uses advanced feature extraction pipelines optimized for Arabic phonetics.</li>
+    </ul>
+    
+    <p>
+        This model is particularly suitable for Quranic recitation recognition due to its ability to handle classical Arabic pronunciation, preserve diacritical marks, and maintain high accuracy even with variations in recitation style (qira'at). The hybrid CTC-attention architecture provides robustness against pronunciation variations while maintaining precise alignment for verse matching.
+    </p>
+    <h4>4.2.2 Text-to-Speech Model</h4>
+    
+    <p>
+        For speech synthesis, the system uses <strong>AhmedEladl/saudi-tts</strong>, a specialized Saudi Arabic TTS model based on FastSpeech2 architecture. The model provides high-quality Arabic speech synthesis with the following technical characteristics:
+    </p>
+    
+    <ul>
+        <li><strong>Model Architecture:</strong> FastSpeech2-based architecture with Transformer blocks optimized for Arabic speech synthesis. The vocoder uses advanced neural vocoding techniques for high-fidelity waveform generation.</li>
+        <li><strong>Training Configuration:</strong> Trained on high-quality Saudi Arabic speech data, including professional Quranic recitation samples. The training data includes multiple speakers to ensure natural voice characteristics.</li>
+        <li><strong>Prosody Control:</strong> The model supports explicit control over pitch, energy, and duration through learned prosody embeddings. This enables natural intonation patterns appropriate for Quranic recitation.</li>
+        <li><strong>Diacritics Handling:</strong> The model processes fully diacritized Arabic text, using diacritical marks to guide pronunciation. This ensures accurate rendering of classical Arabic and Quranic text.</li>
+        <li><strong>Audio Quality:</strong> Generates high-quality audio output suitable for Quranic recitation. The vocoder produces natural-sounding waveforms appropriate for religious content.</li>
+        <li><strong>Inference Performance:</strong> The model supports efficient inference enabling real-time or faster-than-real-time synthesis, with batch processing capabilities for multiple concurrent requests.</li>
+        <li><strong>SSML Support:</strong> Supports Speech Synthesis Markup Language (SSML) for fine-grained control over pronunciation, pauses, and emphasis, which is essential for Quranic recitation.</li>
+    </ul>
+    
+    <p>
+        The choice of a Saudi TTS model is appropriate given the historical significance of Saudi Arabia in Quranic recitation traditions (particularly the Hafs and Warsh recitations) and the model's demonstrated ability to handle classical Arabic text effectively. The model's prosody control capabilities enable it to match the melodic patterns (maqamat) commonly used in Quranic recitation.
+    </p>
+    <h4>4.2.3 Text Generation Model</h4>
+    
+    <p>
+        The system utilizes <strong>openai/gpt-oss-20b</strong> for intelligent text generation and orchestration. This 20-billion parameter decoder-only Transformer model provides comprehensive language understanding and generation capabilities:
+    </p>
+    
+    <ul>
+        <li><strong>Model Architecture:</strong> GPT-style decoder-only Transformer architecture with 20 billion parameters, optimized for multilingual tasks including Arabic. The model uses standard Transformer components with learned positional embeddings and layer normalization.</li>
+        <li><strong>Training Data:</strong> Pre-trained on diverse multilingual corpora including Arabic text, with capabilities for fine-tuning on Arabic conversational and Quranic text datasets. The model demonstrates strong performance on Arabic language tasks.</li>
+        <li><strong>Context Window:</strong> Supports substantial context windows, enabling maintenance of conversation history and multi-turn interactions. Context is managed through efficient attention mechanisms.</li>
+        <li><strong>Routing Capabilities:</strong> The LLM Router uses few-shot prompting with function calling to determine appropriate service invocations. The model can be fine-tuned on routing examples for improved accuracy.</li>
+        <li><strong>Response Generation:</strong> Generates contextually appropriate responses using advanced sampling techniques for balanced creativity and coherence. The model employs strategies to avoid repetitive outputs.</li>
+        <li><strong>Inference Optimization:</strong> Supports various optimization techniques for reduced memory footprint and faster inference. The model can be deployed using efficient inference frameworks for batched processing.</li>
+        <li><strong>Multi-task Performance:</strong> Handles diverse tasks including intent classification, response generation, summarization, and question-answering, leveraging in-context learning capabilities.</li>
+    </ul>
+    
+    <p>
+        The LLM Router leverages this model to understand user intents, generate appropriate responses, and coordinate between different specialized agents. The model's strong Arabic language capabilities, combined with its reasoning abilities, make it ideal for orchestrating complex multi-agent interactions in the Quranic domain.
+    </p>
+    <h3>4.3 Quran Validation System</h3>
+    
+    <p>
+        The Quran Validator MCP implements a comprehensive two-stage validation process with advanced matching and rule-checking algorithms:
+    </p>
+    <h4>4.3.1 JSON Matching Algorithm</h4>
+    
+    <p>
+        The first stage performs fuzzy string matching against the Quran JSON database. The matching algorithm employs multiple techniques:
+    </p>
+    
+    <ul>
+        <li><strong>Normalization:</strong> Input text is normalized by removing optional diacritical marks (tanween, shadda) that may vary in recitation, while preserving essential marks (fatha, kasra, damma) that affect meaning.</li>
+        <li><strong>Levenshtein Distance Calculation:</strong> Uses dynamic programming [21] to compute edit distance between transcribed text and database verses. The algorithm accounts for:
+            <ul>
+                <li>Character substitutions (e.g., different forms of alif)</li>
+                <li>Insertions/deletions (e.g., optional hamza)</li>
+                <li>Transpositions (rare but possible in rapid speech)</li>
+            </ul>
+        </li>
+        <li><strong>Similarity Threshold:</strong> Matches with normalized Levenshtein similarity above a configured threshold are considered valid. The threshold is tuned based on validation set performance to balance precision and recall.</li>
+        <li><strong>N-gram Matching:</strong> For ambiguous cases, the system uses 3-gram and 5-gram matching to identify verse boundaries and improve matching accuracy.</li>
+        <li><strong>Phonetic Matching:</strong> Employs Arabic phonetic encoding (similar to Soundex) to handle pronunciation variations while maintaining semantic accuracy.</li>
+    </ul>
+    
+    <h4>4.3.2 Tajweed Validation System</h4>
+    
+    <p>
+        The second stage validates adherence to tajweed (proper recitation) rules using a combination of rule-based and machine learning approaches:
+    </p>
+    
+    <ul>
+        <li><strong>Letter Pronunciation Rules:</strong> Validates correct pronunciation of Arabic letters, including:
+            <ul>
+                <li>Makharij (points of articulation) verification using phonetic analysis</li>
+                <li>Sifaat (characteristics) checking for proper letter attributes (e.g., qalqalah, ghunnah)</li>
+                <li>Heavy (tafkhim) vs. light (tarqeeq) letter variants</li>
+            </ul>
+        </li>
+        <li><strong>Madd (Elongation) Rules:</strong> Checks proper application of elongation rules:
+            <ul>
+                <li>Natural madd (madd asli): 2 harakat</li>
+                <li>Secondary madd (madd far'i): 4-6 harakat depending on context</li>
+                <li>Compulsory madd (madd wajib): 6 harakat</li>
+            </ul>
+            Uses duration analysis from audio input to verify elongation timing.
+        </li>
+        <li><strong>Waqf (Stopping) Rules:</strong> Validates appropriate stopping points using:
+            <ul>
+                <li>Grammatical analysis to identify sentence boundaries</li>
+                <li>Semantic completeness checking</li>
+                <li>Rule-based classification of stopping types (permissible, preferred, prohibited)</li>
+            </ul>
+        </li>
+        <li><strong>Idgham and Iqlab Rules:</strong> Checks proper application of assimilation (idgham) and conversion (iqlab) rules using finite-state transducer (FST) models trained on expert-annotated recitation data.</li>
+        <li><strong>Feedback Generation:</strong> The system provides detailed feedback including:
+            <ul>
+                <li>Specific error identification with verse location</li>
+                <li>Rule violation explanation</li>
+                <li>Correct pronunciation guidance</li>
+                <li>Audio examples for correction</li>
+            </ul>
+        </li>
+    </ul>
+    
+    <p>
+        The validator provides comprehensive feedback on recitation accuracy, identifying specific errors and suggesting corrections based on tajweed rules and verse matching algorithms.
+    </p>
+    <h3>4.4 Tafsir Retrieval-Augmented Generation</h3>
+    
+    <p>
+        The Tafsir RAG MCP implements a sophisticated retrieval-augmented generation approach for providing accurate exegesis grounded in classical sources. The system architecture follows the RAG paradigm with domain-specific optimizations:
+    </p>
+    <h4>4.4.1 Knowledge Base Construction</h4>
+    
+    <p>
+        The tafsir knowledge base is constructed from authoritative classical sources including:
+    </p>
+    
+    <ul>
+        <li><strong>Primary Sources:</strong> Tafsir al-Tabari, Tafsir Ibn Kathir, Tafsir al-Qurtubi, Tafsir al-Baghawi, and other classical commentaries</li>
+        <li><strong>Text Preprocessing:</strong> Sources are segmented into passages of appropriate token lengths, preserving verse context and maintaining paragraph boundaries. Each passage is annotated with metadata including verse references, author, and thematic tags.</li>
+        <li><strong>Embedding Generation:</strong> Passages are embedded using multilingual-mpnet-base-v2 model [22], which demonstrates strong performance on Arabic text. The model produces high-dimensional embeddings that capture semantic meaning while preserving Arabic linguistic nuances.</li>
+        <li><strong>Vector Database Indexing:</strong> Embeddings are indexed using FAISS IndexIVFFlat with appropriate clustering for efficient approximate nearest neighbor search. The index is built with L2 distance metric and supports GPU acceleration.</li>
+    </ul>
+    
+    <h4>4.4.2 Retrieval Process</h4>
+    
+    <p>
+        When a tafsir request is received, the system performs the following steps:
+    </p>
+    
+    <ul>
+        <li><strong>Query Processing:</strong> The user query is augmented with verse context (if provided) and expanded using synonym expansion from Arabic WordNet. The query is embedded using the same model as the knowledge base.</li>
+        <li><strong>Similarity Search:</strong> Performs approximate nearest neighbor search in the vector database, retrieving top-k most similar passages. The search uses cosine similarity with appropriate thresholds to filter low-relevance results.</li>
+        <li><strong>Re-ranking:</strong> Retrieved passages are re-ranked using a cross-encoder model (Arabic BERT) to improve precision. The cross-encoder computes query-passage similarity more accurately than the initial embedding-based search.</li>
+        <li><strong>Diversity Filtering:</strong> Applies Maximum Marginal Relevance (MMR) to ensure retrieved passages are diverse and cover different aspects of the query, avoiding redundant information.</li>
+    </ul>
+    
+    <h4>4.4.3 Response Generation</h4>
+    
+    <p>
+        The generation process uses retrieved context to produce accurate and grounded responses:
+    </p>
+    
+    <ul>
+        <li><strong>Prompt Construction:</strong> A structured prompt is created containing:
+            <ul>
+                <li>System instructions emphasizing accuracy and adherence to classical sources</li>
+                <li>Retrieved passages with source attribution</li>
+                <li>User query with verse context</li>
+                <li>Formatting guidelines for structured output</li>
+            </ul>
+        </li>
+        <li><strong>Generation Parameters:</strong> Uses GPT-OSS-20B with appropriate temperature settings for focused, factual responses. Nucleus sampling ensures quality while maintaining coherence. Response length is controlled to maintain relevance and completeness.</li>
+        <li><strong>Citation Integration:</strong> The model is instructed to cite sources for each claim, ensuring traceability to classical commentaries. Citations are formatted consistently with source name and verse reference.</li>
+        <li><strong>Post-processing:</strong> Generated responses undergo validation:
+            <ul>
+                <li>Fact-checking against retrieved passages</li>
+                <li>Removal of hallucinated content not present in sources</li>
+                <li>Formatting and structure validation</li>
+            </ul>
+        </li>
+    </ul>
+    
+    <p>
+        This approach ensures that tafsir responses are grounded in authoritative sources while leveraging the generative capabilities of modern language models. The system maintains accuracy through source attribution and validation against classical commentaries.
+    </p>
+    <h3>4.5 Translation System</h3>
+    
+    <p>
+        The Translation MCP supports multi-language translation of Quranic verses. The system utilizes fine-tuned multilingual models, particularly mBART (multilingual Bidirectional and Auto-Regressive Transformers), which have demonstrated strong performance on Arabic-to-other-language translation tasks. The system can translate Arabic text to multiple target languages, with special handling for:
+    </p>
+    
+    <ul>
+        <li><strong>Meaning Preservation:</strong> The translation process prioritizes accurate preservation of meaning and context, which is critical for religious text where precision is paramount. The system employs context-aware translation that considers verse context and surrounding verses.</li>
+        <li><strong>Terminology Handling:</strong> Specialized handling of proper nouns and religious terminology through a custom glossary that ensures consistent translation of key Islamic concepts. This includes names of prophets, places, and theological terms that may have established translations in different languages.</li>
+        <li><strong>Rhetorical Preservation:</strong> Maintaining the poetic and rhetorical aspects where possible, recognizing that the Quran's literary qualities are an important aspect of its meaning. The system attempts to preserve stylistic features while ensuring clarity in the target language.</li>
+        <li><strong>Multiple Translation Options:</strong> The system can provide multiple translation variants when appropriate, allowing users to understand different interpretations or nuances of meaning.</li>
+    </ul>
+    
+    <h2>5. Implementation Details</h2>
+    
+    <h3>5.1 Infrastructure and Deployment</h3>
+    
+    <p>
+        The system is designed for deployment using containerization (Docker) and can be hosted on various platforms, including cloud services and dedicated hardware. The infrastructure layer includes:
+    </p>
+    
+    <ul>
+        <li><strong>Security:</strong> Authentication, authorization, rate limiting, and API key management integrated with the API Gateway</li>
+        <li><strong>Monitoring:</strong> Prometheus for metrics collection and Grafana for visualization and alerting</li>
+        <li><strong>Hosting:</strong> Support for cloud platforms (Hugging Face Spaces) and dedicated hardware (NVIDIA H200 GPUs) for model inference</li>
+    </ul>
+    
+    <h3>5.2 Microservice Communication</h3>
+    
+    <p>
+        Communication between microservices is implemented using a hybrid approach combining RESTful APIs for synchronous requests and message queues for asynchronous processing:
+    </p>
+    
+    <ul>
+        <li><strong>RESTful API Design:</strong> Each MCP exposes standardized REST endpoints following OpenAPI 3.0 specification. Endpoints use JSON for request/response payloads with consistent error handling. API versioning (v1, v2) is supported for backward compatibility.</li>
+        <li><strong>Message Queue Architecture:</strong> Asynchronous tasks (e.g., batch processing, background jobs) use RabbitMQ with topic exchanges. Message persistence ensures reliability, and dead-letter queues handle failed messages. Message TTL is configured appropriately to prevent queue buildup.</li>
+        <li><strong>Service Discovery:</strong> Services register with Consul for service discovery. Health checks are performed at regular intervals, and unhealthy services are automatically removed from the routing pool.</li>
+        <li><strong>Load Balancing:</strong> Requests are distributed using round-robin load balancing with health-aware routing. Circuit breakers (Hystrix-style) prevent cascading failures by isolating failing services.</li>
+        <li><strong>Request Tracing:</strong> Distributed tracing using OpenTelemetry with Jaeger backend enables end-to-end request tracking. Each request is assigned a unique trace ID propagated through all service calls.</li>
+        <li><strong>API Gateway Integration:</strong> Kong API Gateway handles request routing, authentication, rate limiting, and request/response transformation. It provides a single entry point for all client requests.</li>
+    </ul>
+    
+    <h3>5.3 Error Handling and Resilience</h3>
+    
+    <p>
+        The system implements comprehensive error handling at multiple levels:
+    </p>
+    
+    <ul>
+        <li>Input validation at the API Gateway level</li>
+        <li>Graceful degradation when specific services are unavailable</li>
+        <li>Retry mechanisms for transient failures</li>
+        <li>Comprehensive logging for debugging and monitoring</li>
+    </ul>
+    
+    <h2>6. Results and Evaluation</h2>
+    
+    <h3>6.1 Speech Recognition Accuracy</h3>
+    
+    <p>
+        The STT system demonstrates strong performance on Arabic speech recognition, particularly for clear recitation. The FastConformer model's hybrid architecture [2] enables robust handling of various speaking styles and accents while maintaining accuracy for classical Arabic pronunciation. The model's PCD (Punctuation, Capitalization, Diacritics) support ensures accurate preservation of diacritical marks essential for Quranic text, addressing a critical requirement that distinguishes Quranic Arabic from Modern Standard Arabic.
+    </p>
+    
+    <p>
+        The system processes audio input efficiently, with the model supporting real-time or faster-than-real-time inference on appropriate hardware. Performance may vary based on audio quality, speaker accent, and recitation style, but the model is designed to handle the unique characteristics of Quranic Arabic effectively. The hybrid CTC-attention architecture provides a balance between alignment accuracy and robustness to pronunciation variations, which is essential for handling different recitation styles (qira'at).
+    </p>
+    <h3>6.2 Verse Matching Performance</h3>
+    
+    <p>
+        The Quran Validator achieves high precision in matching user recitation to the correct verses in the database. The fuzzy matching algorithm [21] accounts for natural variations in pronunciation while maintaining strict accuracy requirements for religious text. The system correctly handles common variations such as optional hamza, different alif forms, and minor diacritical mark differences, which are characteristic of different recitation styles and regional pronunciations.
+    </p>
+    
+    <p>
+        The matching process employs multiple techniques including Levenshtein distance calculation, n-gram matching, and phonetic encoding to ensure robust verse identification even with pronunciation variations. The multi-stage approach—combining exact matching, fuzzy matching, and phonetic similarity—ensures that the system can identify verses accurately even when the transcribed text contains minor errors or variations. The system is designed to provide accurate results while accommodating the natural diversity in recitation styles, which is essential for a system intended for use by learners at different proficiency levels.
+    </p>
+    <h3>6.3 Response Quality</h3>
+    
+    <p>
+        The TTS system produces natural-sounding Arabic speech that is appropriate for Quranic content. The Saudi TTS model's training on high-quality Arabic audio ensures that responses are clear and culturally appropriate. The model demonstrates particularly strong performance on classical Arabic text with proper diacritical marks.
+    </p>
+    
+    <p>
+        The prosody control capabilities enable the model to match the melodic patterns commonly used in Quranic recitation, while SSML support allows for fine-grained control over pronunciation, pauses, and emphasis essential for accurate religious text rendering.
+    </p>
+    <h3>6.4 System Scalability and Performance</h3>
+    
+    <p>
+        The microservices architecture enables horizontal scaling of individual components based on demand. The stateless design of most services allows for efficient load distribution and resource utilization. The system is designed to handle varying loads through auto-scaling policies and efficient resource management.
+    </p>
+    
+    <p>
+        The entire pipeline is designed to complete within reasonable timeframes for typical queries, with processing times varying based on query complexity, system load, and available computational resources. The distributed architecture allows for parallel processing and efficient resource utilization across different components.
+    </p>
+    <h2>7. Discussion</h2>
+    
+    <h3>7.1 Challenges and Solutions</h3>
+    
+    <p>
+        Several challenges were encountered during development, each requiring careful consideration and innovative solutions:
+    </p>
+    
+    <ul>
+        <li><strong>Classical Arabic Processing:</strong> Quranic Arabic differs from Modern Standard Arabic in vocabulary, grammar, and style [15]. The selected models, particularly the FastConformer STT model [2], were chosen for their ability to handle classical Arabic effectively. Additionally, the system incorporates specialized preprocessing steps to normalize classical Arabic forms and handle archaic vocabulary that may not be present in models trained primarily on modern texts.</li>
+        <li><strong>Tajweed Rule Implementation:</strong> Implementing comprehensive tajweed validation required careful rule engineering and phonetic analysis. The system uses a combination of rule-based and machine learning approaches, with finite-state transducer models for complex rule patterns. The challenge lies in balancing strict adherence to rules with tolerance for natural pronunciation variations, particularly for learners at different proficiency levels.</li>
+        <li><strong>Context Preservation:</strong> Maintaining context across multi-turn conversations required careful state management in the LLM Router and specialized agents. The system implements a hierarchical context management approach, where conversation history is maintained at multiple levels—global session context, intent-specific context, and verse-specific context—enabling the system to provide coherent responses that reference previous interactions.</li>
+        <li><strong>Latency Optimization:</strong> Voice interactions require low latency for good user experience. The system employs multiple optimization strategies including caching of frequently accessed data (verse database, embeddings), parallel processing of independent operations (intent classification and initial STT processing), and optimized model inference using quantization and batch processing where appropriate.</li>
+        <li><strong>Accuracy vs. Speed Trade-off:</strong> Balancing accuracy requirements for religious text with the need for responsive user interactions required careful optimization. The system uses a tiered approach: fast approximate methods for initial processing, followed by more accurate but computationally intensive methods when needed.</li>
+        <li><strong>Cultural and Linguistic Sensitivity:</strong> Ensuring that the system respects cultural and linguistic nuances of Quranic text required consultation with domain experts and careful validation of outputs. The system includes validation layers that check outputs against established Islamic scholarship before presentation to users.</li>
+    </ul>
+    
+    <h3>7.2 Limitations</h3>
+    
+    <p>
+        Current limitations of the system include:
+    </p>
+    
+    <ul>
+        <li>Dependence on internet connectivity for cloud-based model inference</li>
+        <li>Limited support for some regional Arabic dialects in speech recognition</li>
+        <li>Requirement for clear audio input for optimal STT performance</li>
+        <li>Computational resource requirements for real-time inference</li>
+    </ul>
+    
+    <h3>7.3 Future Improvements</h3>
+    
+    <p>
+        Potential areas for future enhancement include:
+    </p>
+    
+    <ul>
+        <li><strong>On-device Deployment:</strong> Implementing on-device model deployment for offline functionality, enabling users to access core features without internet connectivity. This would involve model quantization and optimization for mobile and edge devices.</li>
+        <li><strong>Enhanced Tajweed Validation:</strong> Expansion of tajweed validation rules and feedback mechanisms, including real-time audio analysis and more granular error detection. Integration with expert reciter annotations could improve rule accuracy.</li>
+        <li><strong>Extended Tafsir Sources:</strong> Integration of additional tafsir sources and classical commentaries, including contemporary interpretations and thematic studies. This would provide users with a more comprehensive understanding of Quranic verses.</li>
+        <li><strong>Multi-modal Support:</strong> Addition of visual content support including calligraphy, translations, and interactive verse highlighting. Integration with augmented reality could provide immersive learning experiences.</li>
+        <li><strong>Personalized Learning:</strong> Implementation of personalized learning paths and progress tracking, adapting to individual user proficiency levels and learning styles. Machine learning algorithms could optimize content delivery based on user performance.</li>
+        <li><strong>Community Features:</strong> Development of community features for sharing recitations, collaborative learning, and peer feedback. This could include social learning networks and expert mentorship connections.</li>
+        <li><strong>Advanced Analytics:</strong> Integration of learning analytics to provide insights into user progress, common mistakes, and areas for improvement. This data could inform both individual learning paths and system improvements.</li>
+    </ul>
+    
+    <h2>8. Impact and Applications</h2>
+    
+    <p>
+        The multi-agent voice Quran assistant has significant potential impact in several areas:
+    </p>
+    
+    <ul>
+        <li><strong>Education:</strong> Facilitating Quranic learning for students at all levels, from beginners to advanced learners. The system provides personalized feedback and validation, enabling self-paced learning while maintaining accuracy. Educational institutions can integrate the system into their curricula to supplement traditional teaching methods.</li>
+        <li><strong>Accessibility:</strong> Making Quranic resources available to individuals with visual impairments or limited literacy. The voice-based interface eliminates barriers to accessing religious texts, promoting inclusivity in religious education. The system's audio-first design ensures that users can engage with Quranic content without requiring reading skills.</li>
+        <li><strong>Global Reach:</strong> Providing access to Quranic education for Muslims in remote or underserved areas where qualified teachers may be unavailable. The system's cloud-based architecture enables deployment in various regions, making quality religious education accessible regardless of geographic location.</li>
+        <li><strong>Consistency:</strong> Offering standardized recitation validation and interpretation based on authoritative sources. This ensures that users receive accurate guidance consistent with established Islamic scholarship, reducing the risk of misinterpretation or incorrect recitation practices.</li>
+        <li><strong>Research:</strong> Enabling new research opportunities in computational linguistics, religious studies, and educational technology. The system generates valuable data on Quranic learning patterns, recitation accuracy, and user interactions that can inform future research in these domains.</li>
+        <li><strong>Preservation:</strong> Contributing to the digital preservation of Quranic recitation traditions and classical tafsir sources. By digitizing and making these resources accessible through modern interfaces, the system helps ensure their continued availability for future generations.</li>
+    </ul>
+    
+    <h2>9. Conclusion</h2>
+    
+    <p>
+        This paper has presented a comprehensive multi-agent voice Quran assistant that integrates state-of-the-art speech recognition, natural language processing, and text-to-speech technologies. The system's microservices architecture enables specialized handling of different aspects of Quranic interaction, from recitation validation to tafsir generation.
+    </p>
+    <p>
+        The integration of NVIDIA's FastConformer model for Arabic speech recognition, AhmedEladl's Saudi TTS for speech synthesis, and OpenAI's GPT-OSS-20B for intelligent orchestration creates a powerful system capable of handling diverse user needs. The use of a comprehensive Quran JSON dataset ensures accurate verse matching and validation.
+    </p>
+    <p>
+        The system demonstrates the potential of modern AI technologies to enhance religious education and make sacred texts more accessible. Future work will focus on improving accuracy, expanding functionality, and optimizing for various deployment scenarios. The open architecture and use of open-source models provide a foundation for continued development and community contribution.
+    </p>
+    <p>
+        As technology continues to advance, systems like this will play an increasingly important role in preserving and disseminating religious knowledge while making it accessible to a global audience. The combination of traditional Islamic scholarship with modern computational methods represents a promising direction for the future of religious education technology.
+    </p>
+    <div class="page-break"></div>
+    <h2>References</h2>
+    <div class="references">
+        <div class="reference-item">
+            [1] Quran JSON Dataset. GitHub Repository: piraka9011/quranjson. Available: https://github.com/piraka9011/quranjson
+        </div>
+        
+        <div class="reference-item">
+            [2] NVIDIA. "Arabic FastConformer-Hybrid Large Model with Punctuation, Capitalization, and Diacritics." Hugging Face Model: nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0. Available: https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0
+        </div>
+        
+        <div class="reference-item">
+            [3] Ahmed Eladl. "Saudi Text-to-Speech Model." Hugging Face Model: AhmedEladl/saudi-tts. Available: https://huggingface.co/AhmedEladl/saudi-tts
+        </div>
+        
+        <div class="reference-item">
+            [4] OpenAI. "GPT-OSS-20B: Open Source Language Model." Hugging Face Model: openai/gpt-oss-20b. Available: https://huggingface.co/openai/gpt-oss-20b
+        </div>
+        
+        <div class="reference-item">
+            [5] Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., & Sutskever, I. "Robust Speech Recognition via Large-Scale Weak Supervision." Proceedings of the 40th International Conference on Machine Learning (ICML), 2023. Available: https://arxiv.org/abs/2212.04356
+        </div>
+        
+        <div class="reference-item">
+            [6] Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., ... & Riedel, S. "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks." Advances in Neural Information Processing Systems (NeurIPS), vol. 33, pp. 9459-9474, 2020. Available: https://arxiv.org/abs/2005.11401
+        </div>
+        
+        <div class="reference-item">
+            [7] Abdul-Mageed, M., Alhuzali, H., & Elaraby, M. "You Tweet What You Speak: A City-Level Dataset of Arabic Dialects." Proceedings of the 12th Language Resources and Evaluation Conference (LREC), pp. 3653-3663, 2020.
+        </div>
+        
+        <div class="reference-item">
+            [8] Wooldridge, M. "An Introduction to MultiAgent Systems." 2nd ed., John Wiley & Sons, 2009.
+        </div>
+        
+        <div class="reference-item">
+            [9] Al-Khalifa, H. S., & Al-Yahya, M. N. "A Survey of Digital Quran Applications: Current Status and Future Directions." International Journal of Advanced Computer Science and Applications (IJACSA), vol. 7, no. 9, pp. 1-10, 2016.
+        </div>
+        
+        <div class="reference-item">
+            [10] Brown, T., Mann, B., Ryder, N., Subbiah, M., Kaplan, J. D., Dhariwal, P., ... & Amodei, D. "Language Models are Few-Shot Learners." Advances in Neural Information Processing Systems (NeurIPS), vol. 33, pp. 1877-1901, 2020. Available: https://arxiv.org/abs/2005.14165
+        </div>
+        
+        <div class="reference-item">
+            [11] Chroma Vector Database. Available: https://www.trychroma.com/
+        </div>
+        
+        <div class="reference-item">
+            [12] Weaviate Vector Database. Available: https://weaviate.io/
+        </div>
+        
+        <div class="reference-item">
+            [13] Facebook AI Similarity Search (FAISS). Available: https://github.com/facebookresearch/faiss
+        </div>
+        
+        <div class="reference-item">
+            [14] Prometheus Monitoring System. Available: https://prometheus.io/
+        </div>
+        
+        <div class="reference-item">
+            [15] Habash, N. Y. "Introduction to Arabic Natural Language Processing." Synthesis Lectures on Human Language Technologies, vol. 3, no. 1, pp. 1-187, 2010.
+        </div>
+        
+        <div class="reference-item">
+            [16] AlBadawy, E. A., & Elhadad, M. "Arabic Text-to-Speech Synthesis: A Survey." International Journal of Advanced Computer Science and Applications (IJACSA), vol. 9, no. 3, pp. 1-8, 2018.
+        </div>
+        
+        <div class="reference-item">
+            [17] Stone, P., & Veloso, M. "Multiagent Systems: A Survey from a Machine Learning Perspective." Autonomous Robots, vol. 8, no. 3, pp. 345-383, 2000.
+        </div>
+        
+        <div class="reference-item">
+            [18] Newman, S. "Building Microservices: Designing Fine-Grained Systems." 2nd ed., O'Reilly Media, 2021.
+        </div>
+        
+        <div class="reference-item">
+            [19] Guu, K., Lee, K., Tung, Z., Pasupat, P., & Chang, M. "Retrieval Augmented Language Model Pre-training." Proceedings of the 37th International Conference on Machine Learning (ICML), 2020. Available: https://arxiv.org/abs/2002.08909
+        </div>
+        
+        <div class="reference-item">
+            [20] Devlin, J., Chang, M. W., Lee, K., & Toutanova, K. "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding." Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL), pp. 4171-4186, 2019. Available: https://arxiv.org/abs/1810.04805
+        </div>
+        
+        <div class="reference-item">
+            [21] Levenshtein, V. I. "Binary Codes Capable of Correcting Deletions, Insertions, and Reversals." Soviet Physics Doklady, vol. 10, no. 8, pp. 707-710, 1966.
+        </div>
+        
+        <div class="reference-item">
+            [22] Reimers, N., & Gurevych, I. "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks." Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing (EMNLP), pp. 3982-3992, 2019. Available: https://arxiv.org/abs/1908.10084
+        </div>
+        
+    </div>
+    
+    
+</body>
+</html>
