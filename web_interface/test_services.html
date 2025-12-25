@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Testing - اختبار الخدمات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .service-card {
+            margin-bottom: 20px;
+        }
+        
+        .service-card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .result-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .result-box pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status.healthy {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .status.unhealthy {
+            background: #f44336;
+            color: white;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 12px;
+            background: #f0f0f0;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Service Testing - اختبار الخدمات</h1>
+            <p>Test each service individually</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('stt')">STT Service</button>
+            <button class="tab" onclick="showTab('llm')">LLM Router</button>
+            <button class="tab" onclick="showTab('validator')">Quran Validator</button>
+            <button class="tab" onclick="showTab('tafsir')">Tafsir RAG</button>
+            <button class="tab" onclick="showTab('gateway')">API Gateway</button>
+            <button class="tab" onclick="showTab('health')">Health Check</button>
+        </div>
+        
+        <!-- STT Service Tab -->
+        <div id="stt" class="tab-content active">
+            <div class="service-card">
+                <h2>🎤 Speech-to-Text Service</h2>
+                <div class="input-group">
+                    <label>Upload Audio File:</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="sttFile" accept="audio/*">
+                        <label class="file-input-label" for="sttFile">Click to select audio file</label>
+                    </div>
+                </div>
+                <button onclick="testSTT()">Transcribe Audio</button>
+                <div id="sttResult" class="result-box" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- LLM Router Tab -->
+        <div id="llm" class="tab-content">
+            <div class="service-card">
+                <h2>🧠 LLM Router Service (Voice Assistant Brain)</h2>
+                
+                <h3>Chat Test (Voice Assistant)</h3>
+                <div class="input-group">
+                    <label>Message:</label>
+                    <textarea id="llmChatInput" placeholder="اكتب رسالتك هنا..."></textarea>
+                </div>
+                <button onclick="testLLMChat()">Send Chat</button>
+                
+                <h3 style="margin-top: 30px;">Intent Classification</h3>
+                <div class="input-group">
+                    <label>Text to Classify:</label>
+                    <textarea id="llmIntentInput" placeholder="Enter text to classify intent..."></textarea>
+                </div>
+                <button onclick="testLLMIntent()">Classify Intent</button>
+                
+                <h3 style="margin-top: 30px;">Recitation Validation</h3>
+                <div class="input-group">
+                    <label>Recitation Text:</label>
+                    <textarea id="llmValidationInput" placeholder="اكتب التلاوة هنا..."></textarea>
+                </div>
+                <button onclick="testLLMValidation()">Validate Recitation</button>
+                
+                <div id="llmResult" class="result-box" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Validator Tab -->
+        <div id="validator" class="tab-content">
+            <div class="service-card">
+                <h2>✅ Quran Validator Service</h2>
+                <div class="input-group">
+                    <label>Recitation Text:</label>
+                    <textarea id="validatorInput" placeholder="اكتب التلاوة هنا..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Surah Index (Optional):</label>
+                    <input type="text" id="validatorSurah" placeholder="001">
+                </div>
+                <button onclick="testValidator()">Validate</button>
+                <div id="validatorResult" class="result-box" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Tafsir Tab -->
+        <div id="tafsir" class="tab-content">
+            <div class="service-card">
+                <h2>📚 Tafsir RAG Service</h2>
+                <div class="input-group">
+                    <label>Query:</label>
+                    <textarea id="tafsirInput" placeholder="اكتب سؤالك عن التفسير..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Surah Index (Optional):</label>
+                    <input type="text" id="tafsirSurah" placeholder="001">
+                </div>
+                <div class="input-group">
+                    <label>Verse Key (Optional):</label>
+                    <input type="text" id="tafsirVerse" placeholder="verse_1">
+                </div>
+                <button onclick="testTafsir()">Get Tafsir</button>
+                <div id="tafsirResult" class="result-box" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- API Gateway Tab -->
+        <div id="gateway" class="tab-content">
+            <div class="service-card">
+                <h2>🚪 API Gateway</h2>
+                
+                <h3>Voice Query (Full Pipeline)</h3>
+                <div class="input-group">
+                    <label>Upload Audio:</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="gatewayFile" accept="audio/*">
+                        <label class="file-input-label" for="gatewayFile">Click to select audio file</label>
+                    </div>
+                </div>
+                <button onclick="testGatewayVoice()">Process Voice Query</button>
+                
+                <h3 style="margin-top: 30px;">Text Query</h3>
+                <div class="input-group">
+                    <label>Text:</label>
+                    <textarea id="gatewayText" placeholder="اكتب سؤالك هنا..."></textarea>
+                </div>
+                <button onclick="testGatewayText()">Process Text Query</button>
+                
+                <div id="gatewayResult" class="result-box" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Health Check Tab -->
+        <div id="health" class="tab-content">
+            <div class="service-card">
+                <h2>🏥 Health Check</h2>
+                <button onclick="checkAllHealth()">Check All Services</button>
+                <div id="healthResult" class="result-box" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function displayResult(elementId, data, title) {
+            const resultDiv = document.getElementById(elementId);
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <h3>${title}</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+        
+        // STT Testing
+        async function testSTT() {
+            const fileInput = document.getElementById('sttFile');
+            if (!fileInput.files[0]) {
+                alert('Please select an audio file');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            try {
+                const response = await fetch(`${API_BASE}/transcribe`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                displayResult('sttResult', data, 'STT Result');
+            } catch (error) {
+                displayResult('sttResult', {error: error.message}, 'STT Error');
+            }
+        }
+        
+        // LLM Chat Testing
+        async function testLLMChat() {
+            const input = document.getElementById('llmChatInput').value;
+            if (!input.trim()) {
+                alert('Please enter a message');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8002/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        messages: [
+                            {role: 'user', content: input}
+                        ],
+                        temperature: 0.75,
+                        max_tokens: 300
+                    })
+                });
+                const data = await response.json();
+                displayResult('llmResult', data, 'LLM Chat Response (Voice Optimized)');
+            } catch (error) {
+                displayResult('llmResult', {error: error.message}, 'LLM Error');
+            }
+        }
+        
+        // LLM Intent Classification
+        async function testLLMIntent() {
+            const input = document.getElementById('llmIntentInput').value;
+            if (!input.trim()) {
+                alert('Please enter text to classify');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8002/classify_intent', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: input})
+                });
+                const data = await response.json();
+                displayResult('llmResult', data, 'Intent Classification');
+            } catch (error) {
+                displayResult('llmResult', {error: error.message}, 'Error');
+            }
+        }
+        
+        // LLM Validation
+        async function testLLMValidation() {
+            const input = document.getElementById('llmValidationInput').value;
+            if (!input.trim()) {
+                alert('Please enter recitation text');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8002/validate_recitation', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: input})
+                });
+                const data = await response.json();
+                displayResult('llmResult', data, 'Recitation Validation (Voice Optimized)');
+            } catch (error) {
+                displayResult('llmResult', {error: error.message}, 'Error');
+            }
+        }
+        
+        // Validator Testing
+        async function testValidator() {
+            const text = document.getElementById('validatorInput').value;
+            const surah = document.getElementById('validatorSurah').value;
+            
+            if (!text.trim()) {
+                alert('Please enter recitation text');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8003/validate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        text: text,
+                        surah_index: surah || null
+                    })
+                });
+                const data = await response.json();
+                displayResult('validatorResult', data, 'Validation Result');
+            } catch (error) {
+                displayResult('validatorResult', {error: error.message}, 'Error');
+            }
+        }
+        
+        // Tafsir Testing
+        async function testTafsir() {
+            const query = document.getElementById('tafsirInput').value;
+            const surah = document.getElementById('tafsirSurah').value;
+            const verse = document.getElementById('tafsirVerse').value;
+            
+            if (!query.trim()) {
+                alert('Please enter a query');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8004/tafsir', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        query: query,
+                        surah_index: surah || null,
+                        verse_key: verse || null
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({error: `HTTP ${response.status}: ${response.statusText}`}));
+                    displayResult('tafsirResult', errorData, 'Tafsir Error');
+                    return;
+                }
+                
+                const data = await response.json();
+                displayResult('tafsirResult', data, 'Tafsir Result (Voice Optimized)');
+            } catch (error) {
+                displayResult('tafsirResult', {
+                    error: error.message,
+                    message: 'Failed to connect to Tafsir service. Make sure the service is running on port 8004.',
+                    troubleshooting: 'Check: 1) Service is running, 2) Port 8004 is accessible, 3) No firewall blocking'
+                }, 'Connection Error');
+            }
+        }
+        
+        // Gateway Voice Query
+        async function testGatewayVoice() {
+            const fileInput = document.getElementById('gatewayFile');
+            if (!fileInput.files[0]) {
+                alert('Please select an audio file');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            try {
+                const response = await fetch(`${API_BASE}/voice_query`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                displayResult('gatewayResult', data, 'Voice Query Result (Full Pipeline)');
+            } catch (error) {
+                displayResult('gatewayResult', {error: error.message}, 'Error');
+            }
+        }
+        
+        // Gateway Text Query
+        async function testGatewayText() {
+            const text = document.getElementById('gatewayText').value;
+            if (!text.trim()) {
+                alert('Please enter text');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/text_query`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: text})
+                });
+                const data = await response.json();
+                displayResult('gatewayResult', data, 'Text Query Result');
+            } catch (error) {
+                displayResult('gatewayResult', {error: error.message}, 'Error');
+            }
+        }
+        
+        // Health Check
+        async function checkAllHealth() {
+            const services = [
+                {name: 'API Gateway', url: `${API_BASE}/health`},
+                {name: 'STT Service', url: 'http://localhost:8001/health'},
+                {name: 'LLM Router', url: 'http://localhost:8002/health'},
+                {name: 'Quran Validator', url: 'http://localhost:8003/health'},
+                {name: 'Tafsir RAG', url: 'http://localhost:8004/health'},
+                {name: 'TTS Service', url: 'http://localhost:8005/health'}
+            ];
+            
+            const results = {};
+            
+            for (const service of services) {
+                try {
+                    const response = await fetch(service.url);
+                    const data = await response.json();
+                    results[service.name] = {
+                        status: 'healthy',
+                        data: data
+                    };
+                } catch (error) {
+                    results[service.name] = {
+                        status: 'unhealthy',
+                        error: error.message
+                    };
+                }
+            }
+            
+            displayResult('healthResult', results, 'All Services Health Status');
+        }
+    </script>
+</body>
+</html>
+
