@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+*.pym
+*.pdb
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Vector Database
+vector_db/
+*.faiss
+*.index
+
+# Environment
+.env
+.env.local
+
+# Model cache
+.cache/
+models/
+*.pt
+*.pth
+*.bin
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sub-repo
+whisper-base-ar-quran/
+
+# Data (if large)
+# Quran_Data/audio/
